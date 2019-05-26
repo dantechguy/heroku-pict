@@ -31,7 +31,7 @@
   });
 
   socket.on('generateLobby', function(data) {
-    contentDom.innerHTML = `<input placeholder='Name' type='text' id='name'><button onclick='playerReady();' id='ready'>Ready</button>`;
+    contentDom.innerHTML = `Enter your name:<br><input placeholder='name' type='text' id='name'><button onclick='playerReady();' id='ready'>Ready</button>`;
   });
 
   function playerReady() {
@@ -41,7 +41,7 @@
   };
 
   socket.on('generateInitialPrompt', function() {
-    contentDom.innerHTML = `<input placeholder='Promt' type='text' id='prompt'><button onclick='submitPrompt();' id='submit'>Submit</button>`;
+    contentDom.innerHTML = `enter a random prompt or phrase:<br><input placeholder='promt' type='text' id='prompt'><button onclick='submitPrompt();' id='submit'>Submit</button>`;
   });
 
   function submitPrompt() {
