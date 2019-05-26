@@ -115,7 +115,7 @@ function playerReadyWithName(socket, name) {
 
 function ifRoomReadyStartGame(socket) {
   let roomObject = getRoomObjectFromSocket(socket);
-  if (roomObject.isReady()) {
+  if (roomObject.isReady() && roomObject.hasMoreThanOnePlayer()) {
     startRoomGame(roomObject.roomId);
   };
 };

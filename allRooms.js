@@ -84,6 +84,10 @@ class roomClass {
     return Object.keys(this.userObjects).length === 0;
   }
 
+  hasMoreThanOnePlayer() {
+    return Object.keys(this.userObjects).length > 1;
+  }
+
   sendDrawingsAndGenerateInput() {
     for (let userId in this.userObjects) {
       let userObject = this.userObjects[userId];
