@@ -1,0 +1,121 @@
+<div id='container' style='font-size: 0;text-align: center;background-color: #ddd;'>
+  <div id=topbar style='font-size: 25px;user-select: none;'>
+    <button id="clear" style='height: 40px;'>clear</button>
+    <span style='height: 40px;'>` + prompt + `</span>
+    <button id="submit" style='height: 40px;'>submit</button>
+  </div>
+  <canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas>
+</div>
+
+
+<script type="text/javascript" id="tempScript">
+var width = 1000;
+var height = 2000;
+
+var canvasDom = document.querySelector('canvas');
+canvasDom.width = width;
+canvasDom.height = height;
+
+var context = canvasDom.getContext('2d');
+context.lineWidth = '40';
+context.lineJoin = 'round';
+context.lineCap = 'round';
+
+var drawingJson = [];
+var mouseDown = false;
+
+var clearDom = document.querySelector('#clear');
+var submitDom = document.querySelector('#submit');
+
+document.addEventListener('touchmove', cancelTouchMove, {passive: false});
+
+canvasDom.addEventListener('mousedown', drawStart, {passive: false});
+canvasDom.addEventListener('touchstart', drawStart, {passive: false});
+
+canvasDom.addEventListener('mousemove', drawMove, {passive: false});
+canvasDom.addEventListener('touchmove', drawMove, {passive: false});
+
+canvasDom.addEventListener('mouseleave', drawEnd);
+canvasDom.addEventListener('mouseup', drawEnd);
+canvasDom.addEventListener('touchend', drawEnd);
+canvasDom.addEventListener('touchcancel', drawEnd);
+
+function cancelTouchMove(event) {
+  event.preventDefault();
+};
+
+function scaleXY(event) {
+  let scale = width / canvasDom.clientWidth;
+
+  if (['touchstart', 'touchmove'].includes(event.type)) {
+
+    let touch = event.touches[0];
+    var rect = event.target.getBoundingClientRect();
+    return {
+      x: (touch.clientX - rect.left) * scale,
+      y: (touch.clientY - rect.top) * scale
+    };
+
+  } else {
+
+    return {
+      x: event.offsetX * scale,
+      y: event.offsetY * scale
+    };
+
+  }
+  
+};
+
+function drawStart(event) {
+  let point = scaleXY(event);
+  let x = point.x;
+  let y = point.y;
+  drawingJson.push( [ {x:x, y:y} ] );
+  mouseDown = true;
+};
+
+function drawMove(event) {
+  event.preventDefault();
+  if (mouseDown) {
+    let point = scaleXY(event);
+    let x = point.x;
+    let y = point.y;
+    drawingJson.slice(-1)[0].push( {x:x, y:y} );
+  };
+};
+
+function drawEnd(event) {
+  mouseDown = false;
+};
+
+
+
+function updateLine() {
+  context.clearRect(0, 0, canvasDom.width, canvasDom.height);
+
+  for (let lineKey in drawingJson) {
+    let line = drawingJson[lineKey];
+
+    context.beginPath();
+    context.moveTo(line[0].x, line[0].y)
+    for (let segmentKey in line.slice(1)) {
+      let segment = line[segmentKey];
+      context.lineTo(segment.x, segment.y);
+    };
+    context.stroke();
+  };
+  requestAnimationFrame(updateLine);
+};
+
+clearDom.onclick = function() {
+  drawingJson = [];
+};
+
+submitDom.onclick = function() {
+  contentDom.innerHTML = '';
+  socket.emit('submitDrawing', drawingJson);
+};
+
+requestAnimationFrame(updateLine);
+</script>
