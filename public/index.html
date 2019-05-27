@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>danwb-pict</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+      color: #fff;
+      font-family: consolas, monospace;
+    }
+
+    body {
+      text-align: center;
+      background-image: url('/bg-export-fast.gif');
+      background-size: 256px;
+      background-attachment:fixed;
+    }
+
+    #content {
+      margin: auto;
+      background-color: #000;
+      width: 50vw;
+      min-width: 300px;
+    }
+
+    * input {
+      border: none;
+      background-color: #333;
+      height: 40px;
+    }
+
+    * button {
+      height: 40px;
+      border: none;
+      background-color: #666;
+    }
+
+    ol {
+      text-align: left;
+      margin-left: 30px;
+    }
+
+    li {
+      margin-top:15px;
+    }
+  </style>
+</head>
+<body>
+  <div id='content'>
+    <h1>hi and welcome to danwb-pict!</h1>
+    <input placeholder='room code' type='text' id='roomId'>
+    <button id='go' onclick='window.location.href="/" + document.querySelector("#roomId").value;'>go to room</button>
+    <button id='random' onclick='window.location.href="/random"'>/random</button>
+    <h3>how to play</h3>
+    <ol>
+      <li>you and your friends enter a four digit code above and press 'go to room'. you could also press 'random' which will generate a new room code for you.</li>
+      <li>everyone needs to enter a name, once everyone has pressed 'ready' the game will continue</li>
+      <li>everyone will then need to enter a prompt and press 'submit'. this is anything random, for example 'parachuting dog'</li>
+      <li>these prompts are then shuffled around between users, and everyone attempts to draw their prompt, then pressing 'submit' once ready</li>
+      <li>these drawings are then shuffled around between users, and all users must write what they think the drawing is, then pressing 'submit'</li>
+      <li>this cycle of "drawing - writing a prompt - drawing" continues for as many rounds as there are people</li>
+      <li>at the end of the game, each user receives a summary of where their drawing ended up, showing the chain reaction of events which lead to the final result</li>
+    </ol>
+  </div>
+</body>
+</html>

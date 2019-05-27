@@ -18,12 +18,14 @@
       font-family: consolas, monospace;
     }
 
-    * input {
+    * input, * span {
+      height: 40px;
       border: none;
       background-color: #333;
     }
 
     * button {
+      height: 40px;
       border: none;
       background-color: #666;
     }
@@ -50,7 +52,7 @@
   });
 
   socket.on('generateLobby', function(data) {
-    contentDom.innerHTML = `enter your name:<br><input style='height: 40px;' placeholder='name' type='text' id='name'><button style='height: 40px;' onclick='playerReady();' id='ready'>ready</button>`;
+    contentDom.innerHTML = `enter your name:<br><input placeholder='name' type='text' id='name'><button onclick='playerReady();' id='ready'>ready</button>`;
   });
 
   function playerReady() {
@@ -60,7 +62,7 @@
   };
 
   socket.on('generateInitialPrompt', function() {
-    contentDom.innerHTML = `enter a random prompt or phrase:<br><input style='height: 40px;' placeholder='prompt' type='text' id='prompt'><button style='height: 40px;' onclick='submitPrompt();' id='submit'>submit</button>`;
+    contentDom.innerHTML = `enter a random prompt or phrase:<br><input placeholder='prompt' type='text' id='prompt'><button onclick='submitPrompt();' id='submit'>submit</button>`;
   });
 
   function submitPrompt() {
@@ -71,13 +73,13 @@
 
   socket.on('receivePromptAndStartDrawing', function(prompt) {
 
-    contentDom.innerHTML = `<div id='container' style='font-size: 0; overflow-y: hidden;'><div id=topbar style='font-size: 15px;user-select: none;'><button id="clear" style='height: 40px;'>clear</button><span style='height: 40px; display:inline-block; vertical-align: top; background-color: #333;'>draw the prompt:<br>` + prompt + `</span><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
+    contentDom.innerHTML = `<div id='container' style='font-size: 0; overflow-y: hidden;'><div id=topbar style='font-size: 15px;user-select: none;'><button id="clear">clear</button><span style='display:inline-block; vertical-align: top;'>draw the prompt:<br>` + prompt + `</span><button id="submit">submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
 
     eval(`var width=1000;var height=2000;var thickness=40;var canvasDom=document.querySelector('canvas');canvasDom.width=width;canvasDom.height=height;var context=canvasDom.getContext('2d');context.lineWidth=thickness;context.lineJoin='round';context.lineCap='round';var drawingJson=[];var mouseDown=!1;var clearDom=document.querySelector('#clear');var submitDom=document.querySelector('#submit');document.addEventListener('touchmove',cancelTouchMove,{passive:!1});canvasDom.addEventListener('mousedown',drawStart,{passive:!1});canvasDom.addEventListener('touchstart',drawStart,{passive:!1});canvasDom.addEventListener('mousemove',drawMove,{passive:!1});canvasDom.addEventListener('touchmove',drawMove,{passive:!1});canvasDom.addEventListener('mouseleave',drawEnd);canvasDom.addEventListener('mouseup',drawEnd);canvasDom.addEventListener('touchend',drawEnd);canvasDom.addEventListener('touchcancel',drawEnd);function cancelTouchMove(event){event.preventDefault()};function scaleXY(event){let scale=width/canvasDom.clientWidth;if(['touchstart','touchmove'].includes(event.type)){let touch=event.touches[0];var rect=event.target.getBoundingClientRect();return{x:(touch.clientX-rect.left)*scale,y:(touch.clientY-rect.top)*scale}}else{return{x:event.offsetX*scale,y:event.offsetY*scale}}};function drawStart(event){let point=scaleXY(event);let x=point.x;let y=point.y;drawingJson.push([{x:x,y:y}]);mouseDown=!0};function drawMove(event){event.preventDefault();if(mouseDown){let point=scaleXY(event);let x=point.x;let y=point.y;drawingJson.slice(-1)[0].push({x:x,y:y})}};function drawEnd(event){mouseDown=!1};function updateLine(){context.clearRect(0,0,canvasDom.width,canvasDom.height);for(let lineKey in drawingJson){let line=drawingJson[lineKey];context.beginPath();context.arc(line[0].x,line[0].y,thickness/2,0,2*Math.PI);context.fill();context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()};requestAnimationFrame(updateLine)};clearDom.onclick=function(){drawingJson=[]};submitDom.onclick=function(){contentDom.innerHTML='';document.removeEventListener('touchmove',cancelTouchMove);socket.emit('submitDrawing',drawingJson)};requestAnimationFrame(updateLine)`);
   });
 
 socket.on('receiveDrawingAndStartGuessing', function(drawingArray) {
-  contentDom.innerHTML = `<div id='container' style='font-size: 0;'><div id=topbar style='font-size: 15px;user-select: none;'><input placeholder='what is this?' type='text' id='guess' style='height: 40px; border: none; padding: 0;'><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
+  contentDom.innerHTML = `<div id='container' style='font-size: 0;'><div id=topbar style='font-size: 15px;user-select: none;'><input placeholder='what is this?' type='text' id='guess' style='border: none; padding: 0;'><button id="submit">submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
 
   eval(`var width=1000;var height=2000;var canvasDom=document.querySelector('canvas');canvasDom.width=width;canvasDom.height=height;var context=canvasDom.getContext('2d');context.lineWidth='40';context.lineJoin='round';context.lineCap='round';var inputDom=document.querySelector('#guess');var submitDom=document.querySelector('#submit');function drawPicture(drawingArray){for(let lineKey in drawingArray){let line=drawingArray[lineKey];context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()}};submitDom.onclick=function(){contentDom.innerHTML='';let guess=inputDom.value;socket.emit('submitPrompt',guess)};drawPicture(` + arrayContainingJsonToString(drawingArray) + `)`)
 });

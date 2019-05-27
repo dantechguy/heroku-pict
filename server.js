@@ -18,7 +18,11 @@ var userLookUpTableClass = allRoomsFile.userLookUpTableClass;
 
 
 // setup get responses
-app.get('/', function(req, res) {
+app.get('^/', function(req, res) {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('^/random', function(req, res) {
   let roomId = g.allRooms.generateUniqueRoomId();
   res.redirect('/' + roomId);
 });
