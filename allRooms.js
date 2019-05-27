@@ -63,6 +63,7 @@ class roomClass {
   }
 
   startGame() {
+    this.roundData.roundsLeft = Object.keys(this.userObjects).length + 1;
     this.stage = 'prompts';
     this.roundData.newRound();
     this.io.to(this.roomId).emit('generateInitialPrompt');
@@ -188,7 +189,7 @@ class roomClass {
         let previousChainData = chainReactionData[userId][previousRoundNumber];
         let previousArtistId = previousChainData.artistId;
 
-        let authorId = previousRoundData[previousArtistId].receivedPromptFrom;
+        let authorId = previousRoundData[previousArtistId].submittedDrawingTo;
         let authorName = this.getUserNameFromId(authorId);
         let guess = roundData[authorId].submittedPrompt;
         let artistId = roundData[authorId].submittedPromptTo;
@@ -205,6 +206,7 @@ class roomClass {
         });
       };
     };
+    console.log(chainReactionData);
     return chainReactionData;
 
   }
@@ -242,7 +244,7 @@ class roomRoundsData {
   constructor(roomObject) {
     this.roomObject = roomObject;
     this.roundData = [];
-    this.roundsLeft = 3; // add 1 to how many times you want to draw
+    this.roundsLeft;
   }
 
   getRoundData(roundNumber) {
