@@ -176,7 +176,7 @@ function playerHasntSubmittedDrawing(socket) {
 function playerSubmitPrompt(socket, prompt) {
   let roomObject = getRoomObjectFromSocket(socket);
   let roomRoundDataObject = roomObject.roundData;
-  roomRoundDataObject.playerSubmitPrompt(socket, prompt);
+  roomRoundDataObject.playerSubmitPrompt(socket, escapeHtml(prompt));
 };
 
 function playerSubmitDrawing(socket, drawingArray) {
