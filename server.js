@@ -27,6 +27,10 @@ app.get('^/:roomId([0-9]{4})', function(req, res) {
   res.sendFile(__dirname + '/public/game.html');
 });
 
+app.get('^/bg-export-fast.gif', function(req, res) {
+  res.sendFile(__dirname + '/public/bg-export-fast.gif');
+});
+
 
 // global variables
 var g = {

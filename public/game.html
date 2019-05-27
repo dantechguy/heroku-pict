@@ -5,8 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style type="text/css">
     body {
-      margin: 0;
       text-align: center;
+      background-image: url('../bg-export-fast.gif');
+      background-size: 256px;
+      background-attachment:fixed;
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+      color: #fff;
+      font-family: consolas, monospace;
+    }
+
+    * input {
+      border: none;
+      background-color: #333;
+    }
+
+    * button {
+      border: none;
+      background-color: #666;
     }
   </style>
 </head>
@@ -31,7 +50,7 @@
   });
 
   socket.on('generateLobby', function(data) {
-    contentDom.innerHTML = `enter your name:<br><input placeholder='name' type='text' id='name'><button onclick='playerReady();' id='ready'>Ready</button>`;
+    contentDom.innerHTML = `enter your name:<br><input style='height: 40px;' placeholder='name' type='text' id='name'><button style='height: 40px;' onclick='playerReady();' id='ready'>ready</button>`;
   });
 
   function playerReady() {
@@ -41,7 +60,7 @@
   };
 
   socket.on('generateInitialPrompt', function() {
-    contentDom.innerHTML = `enter a random prompt or phrase:<br><input placeholder='prompt' type='text' id='prompt'><button onclick='submitPrompt();' id='submit'>Submit</button>`;
+    contentDom.innerHTML = `enter a random prompt or phrase:<br><input style='height: 40px;' placeholder='prompt' type='text' id='prompt'><button style='height: 40px;' onclick='submitPrompt();' id='submit'>submit</button>`;
   });
 
   function submitPrompt() {
@@ -52,13 +71,13 @@
 
   socket.on('receivePromptAndStartDrawing', function(prompt) {
 
-    contentDom.innerHTML = `<div id='container' style='font-size: 0;background-color: #ddd;'><div id=topbar style='font-size: 15px;user-select: none;'><button id="clear" style='height: 40px;'>clear</button><span style='height: 40px; display:inline-block; vertical-align: top;'>draw the prompt:<br>` + prompt + `</span><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
+    contentDom.innerHTML = `<div id='container' style='font-size: 0;'><div id=topbar style='font-size: 15px;user-select: none;'><button id="clear" style='height: 40px;'>clear</button><span style='height: 40px; display:inline-block; vertical-align: top; background-color: #333;'>draw the prompt:<br>` + prompt + `</span><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
 
-    eval(`var width=1e3,height=2e3,canvasDom=document.querySelector("canvas");canvasDom.width=width,canvasDom.height=height;var context=canvasDom.getContext("2d");context.lineWidth="40",context.lineJoin="round",context.lineCap="round";var drawingJson=[],mouseDown=!1,clearDom=document.querySelector("#clear"),submitDom=document.querySelector("#submit");function cancelTouchMove(e){e.preventDefault()}function scaleXY(e){let t=width/canvasDom.clientWidth;if(["touchstart","touchmove"].includes(e.type)){let o=e.touches[0];var n=e.target.getBoundingClientRect();return{x:(o.clientX-n.left)*t,y:(o.clientY-n.top)*t}}return{x:e.offsetX*t,y:e.offsetY*t}}function drawStart(e){let t=scaleXY(e),n=t.x,o=t.y;drawingJson.push([{x:n,y:o}]),mouseDown=!0}function drawMove(e){if(e.preventDefault(),mouseDown){let t=scaleXY(e),n=t.x,o=t.y;drawingJson.slice(-1)[0].push({x:n,y:o})}}function drawEnd(e){mouseDown=!1}function updateLine(){context.clearRect(0,0,canvasDom.width,canvasDom.height);for(let e in drawingJson){let t=drawingJson[e];context.beginPath(),context.moveTo(t[0].x,t[0].y);for(let e in t.slice(1)){let n=t[e];context.lineTo(n.x,n.y)}context.stroke()}requestAnimationFrame(updateLine)}document.addEventListener("touchmove",cancelTouchMove,{passive:!1}),canvasDom.addEventListener("mousedown",drawStart,{passive:!1}),canvasDom.addEventListener("touchstart",drawStart,{passive:!1}),canvasDom.addEventListener("mousemove",drawMove,{passive:!1}),canvasDom.addEventListener("touchmove",drawMove,{passive:!1}),canvasDom.addEventListener("mouseleave",drawEnd),canvasDom.addEventListener("mouseup",drawEnd),canvasDom.addEventListener("touchend",drawEnd),canvasDom.addEventListener("touchcancel",drawEnd),clearDom.onclick=function(){drawingJson=[]},submitDom.onclick=function(){contentDom.innerHTML="",document.removeEventListener("touchmove",cancelTouchMove),socket.emit("submitDrawing",drawingJson)},requestAnimationFrame(updateLine)`);
+    eval(`var width=1000;var height=2000;var thickness=40;var canvasDom=document.querySelector('canvas');canvasDom.width=width;canvasDom.height=height;var context=canvasDom.getContext('2d');context.lineWidth=thickness;context.lineJoin='round';context.lineCap='round';var drawingJson=[];var mouseDown=!1;var clearDom=document.querySelector('#clear');var submitDom=document.querySelector('#submit');document.addEventListener('touchmove',cancelTouchMove,{passive:!1});canvasDom.addEventListener('mousedown',drawStart,{passive:!1});canvasDom.addEventListener('touchstart',drawStart,{passive:!1});canvasDom.addEventListener('mousemove',drawMove,{passive:!1});canvasDom.addEventListener('touchmove',drawMove,{passive:!1});canvasDom.addEventListener('mouseleave',drawEnd);canvasDom.addEventListener('mouseup',drawEnd);canvasDom.addEventListener('touchend',drawEnd);canvasDom.addEventListener('touchcancel',drawEnd);function cancelTouchMove(event){event.preventDefault()};function scaleXY(event){let scale=width/canvasDom.clientWidth;if(['touchstart','touchmove'].includes(event.type)){let touch=event.touches[0];var rect=event.target.getBoundingClientRect();return{x:(touch.clientX-rect.left)*scale,y:(touch.clientY-rect.top)*scale}}else{return{x:event.offsetX*scale,y:event.offsetY*scale}}};function drawStart(event){let point=scaleXY(event);let x=point.x;let y=point.y;drawingJson.push([{x:x,y:y}]);mouseDown=!0};function drawMove(event){event.preventDefault();if(mouseDown){let point=scaleXY(event);let x=point.x;let y=point.y;drawingJson.slice(-1)[0].push({x:x,y:y})}};function drawEnd(event){mouseDown=!1};function updateLine(){context.clearRect(0,0,canvasDom.width,canvasDom.height);for(let lineKey in drawingJson){let line=drawingJson[lineKey];context.beginPath();context.arc(line[0].x,line[0].y,thickness/2,0,2*Math.PI);context.fill();context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()};requestAnimationFrame(updateLine)};clearDom.onclick=function(){drawingJson=[]};submitDom.onclick=function(){contentDom.innerHTML='';document.removeEventListener('touchmove',cancelTouchMove);socket.emit('submitDrawing',drawingJson)};requestAnimationFrame(updateLine)`);
   });
 
 socket.on('receiveDrawingAndStartGuessing', function(drawingArray) {
-  contentDom.innerHTML = `<div id='container' style='font-size: 0;background-color: #ddd;'><div id=topbar style='font-size: 15px;user-select: none;'><input placeholder='what is this?' type='text' id='guess' style='height: 40px; border: none; padding: 0;'><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
+  contentDom.innerHTML = `<div id='container' style='font-size: 0;'><div id=topbar style='font-size: 15px;user-select: none;'><input placeholder='what is this?' type='text' id='guess' style='height: 40px; border: none; padding: 0;'><button id="submit" style='height: 40px;'>submit</button></div><canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas></div>`;
 
   eval(`var width=1000;var height=2000;var canvasDom=document.querySelector('canvas');canvasDom.width=width;canvasDom.height=height;var context=canvasDom.getContext('2d');context.lineWidth='40';context.lineJoin='round';context.lineCap='round';var inputDom=document.querySelector('#guess');var submitDom=document.querySelector('#submit');function drawPicture(drawingArray){for(let lineKey in drawingArray){let line=drawingArray[lineKey];context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()}};submitDom.onclick=function(){contentDom.innerHTML='';let guess=inputDom.value;socket.emit('submitPrompt',guess)};drawPicture(` + arrayContainingJsonToString(drawingArray) + `)`)
 });
@@ -79,7 +98,7 @@ function arrayContainingJsonToString(array) {
 }
 
 socket.on('generateChainReaction', function(chainReactionData) {
-  htmlContent = '';
+  htmlContent = 'Scroll down to see the chain of guesses and drawing!<br>|<br>v<br>';
   jsContent = `function drawPicture(drawingArray,canvasId){let canvas=document.querySelector(canvasId);let context=canvas.getContext('2d');context.lineWidth='40';context.lineJoin='round';context.lineCap='round';for(let lineKey in drawingArray){let line=drawingArray[lineKey];context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()}};let tempCanvas;`;
 
   for (let roundNumber in chainReactionData) {
@@ -97,13 +116,12 @@ socket.on('generateChainReaction', function(chainReactionData) {
     htmlContent += roundHtmlContent;
     jsContent += roundJsContent;
   };
-  contentDom.innerHTML = `<div id='container' style='font-size: 25px;text-align: center;background-color: #ddd;'>` + htmlContent + `</div>`;
+  contentDom.innerHTML = `<div id='container' style='font-size: 25px;text-align: center;'>` + htmlContent + `</div>`;
 
   eval(jsContent)
 });
 
 socket.on('generateUsersStillDrawing', function(userNamesArray) {
-  console.log(userNamesArray)
   contentDom.innerHTML = 'Users still drawing:<br>' + userNamesArray.join('<br>');
 });
 

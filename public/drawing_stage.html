@@ -1,7 +1,7 @@
-<div id='container' style='font-size: 0;background-color: #ddd;'>
+<div id='container' style='font-size: 0;'>
   <div id=topbar style='font-size: 15px;user-select: none;'>
     <button id="clear" style='height: 40px;'>clear</button>
-    <span style='height: 40px; display:inline-block; vertical-align: top;'>draw the prompt:<br>` + prompt + `</span>
+    <span style='height: 40px; display:inline-block; vertical-align: top; background-color: #333;'>draw the prompt:<br>` + prompt + `</span>
     <button id="submit" style='height: 40px;'>submit</button>
   </div>
   <canvas style='background-color: #fff;max-width: 100vw;max-height: calc(100vh - 40px);'></canvas>
@@ -11,13 +11,14 @@
 <script type="text/javascript" id="tempScript">
 var width = 1000;
 var height = 2000;
+var thickness = 40;
 
 var canvasDom = document.querySelector('canvas');
 canvasDom.width = width;
 canvasDom.height = height;
 
 var context = canvasDom.getContext('2d');
-context.lineWidth = '40';
+context.lineWidth = thickness;
 context.lineJoin = 'round';
 context.lineCap = 'round';
 
@@ -98,7 +99,11 @@ function updateLine() {
     let line = drawingJson[lineKey];
 
     context.beginPath();
-    context.moveTo(line[0].x, line[0].y)
+    context.arc(line[0].x, line[0].y, thickness/2, 0, 2 * Math.PI);
+    context.fill();
+    
+    context.beginPath();
+    context.moveTo(line[0].x, line[0].y);
     for (let segmentKey in line.slice(1)) {
       let segment = line[segmentKey];
       context.lineTo(segment.x, segment.y);
