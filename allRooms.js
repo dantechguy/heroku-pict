@@ -81,6 +81,16 @@ class roomClass {
     this.roundData.newRound();
   }
 
+  sendWhoIsStillDrawing() {
+    let playerNamesStillDrawingArray = this.roundData.playerNamesStillDrawing();
+    let playerSocketsSubmittedDrawings = this.roundData.playerSocketsSubmittedDrawings();
+    for (let i in playerSocketsSubmittedDrawings) {
+      let userSocket = playerSocketsSubmittedDrawings[i];
+      userSocket.emit('generateUsersStillDrawing', playerNamesStillDrawingArray);
+    };
+
+  }
+
   isEmpty() {
     return Object.keys(this.userObjects).length === 0;
   }
@@ -245,6 +255,30 @@ class roomRoundsData {
     this.roomObject = roomObject;
     this.roundData = [];
     this.roundsLeft;
+  }
+
+  playerNamesStillDrawing() {
+    let stillDrawingArray = [];
+    for (let userId in this.roomObject.userObjects) {
+      if (!this.playerHasSubmittedDrawing({id:userId})) {
+        let userName = this.roomObject.getUserNameFromId(userId);
+        stillDrawingArray.push(userName);
+      };
+    };
+    return stillDrawingArray;
+  }
+
+  playerSocketsSubmittedDrawings() {
+    let submittedDrawingsArray = [];
+    for (let userId in this.roomObject.userObjects) {
+      if (this.playerHasSubmittedDrawing({id:userId})) {
+        let userObject = this.roomObject.userObjects[userId]
+        let userSocket = userObject.userSocket;
+        console.log(this.roomObject.userObjects)
+        submittedDrawingsArray.push(userSocket);
+      };
+    };
+    return submittedDrawingsArray;
   }
 
   getRoundData(roundNumber) {

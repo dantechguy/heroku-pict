@@ -102,6 +102,11 @@ socket.on('generateChainReaction', function(chainReactionData) {
   eval(jsContent)
 });
 
+socket.on('generateUsersStillDrawing', function(userNamesArray) {
+  console.log(userNamesArray)
+  contentDom.innerHTML = 'Users still drawing:<br>' + userNamesArray.join('<br>');
+});
+
 
 </script>
 </body>

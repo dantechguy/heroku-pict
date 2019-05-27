@@ -87,6 +87,14 @@ function userExists(socket) {
 function getRoomObjectFromSocket(socket) {
   let roomId = g.userLookUpTable.getUsersRoom(socket);
   let roomObject = g.allRooms.getRoomWithId(roomId);
+  if (roomObject === undefined) {
+    console.log('getRoomObjectFromSocket socket:');
+    console.log(socket);
+    console.log('roomId:')
+    console.log(roomId);
+    console.log('roomObject:')
+    console.log(roomObject)
+  };
   return roomObject;
 };
 
@@ -137,7 +145,16 @@ function roomWaitingForPrompts(socket) {
 
 function roomWaitingForDrawings(socket) {
   let roomObject = getRoomObjectFromSocket(socket);
-  return roomObject.stage === 'drawings';
+  try {
+    return roomObject.stage === 'drawings';
+  }
+  catch {
+    console.log('socket:');
+    console.log(socket);
+    console.log('roomObject:')
+    console.log(roomObject)
+    return roomObject.stage === 'drawings';
+  }
 };
 
 function playerHasntSubmittedPrompt(socket) {
@@ -182,6 +199,14 @@ function ifAllPlayersSubmittedDrawingsDistributeDrawings(socket) {
   let roomRoundDataObject = roomObject.roundData;
   if (roomRoundDataObject.allPlayersHaveSubmittedDrawings()) {
     sendDrawingsAndGenerateInputs(roomObject.roomId);
+  };
+};
+
+function ifNotAllPlayersSubmittedDrawingsSendWhoIsStillDrawing(socket) {
+  let roomObject = getRoomObjectFromSocket(socket);
+  let roomRoundDataObject = roomObject.roundData;
+  if (!roomRoundDataObject.allPlayersHaveSubmittedDrawings()) {
+    roomObject.sendWhoIsStillDrawing();
   };
 };
 
@@ -250,8 +275,10 @@ io.on('connection', function(socket) {
     if (roomWaitingForDrawings(socket) && playerHasntSubmittedDrawing(socket)) {
       playerSubmitDrawing(socket, drawingArray);
       ifAllPlayersSubmittedDrawingsDistributeDrawings(socket);
+      ifNotAllPlayersSubmittedDrawingsSendWhoIsStillDrawing(socket);
     };
   });
+
 
 });
 
