@@ -101,7 +101,7 @@ function arrayContainingJsonToString(array) {
 
 socket.on('generateChainReaction', function(chainReactionData) {
   htmlContent = 'Scroll down to see the chain of guesses and drawing!<br>|<br>v<br>';
-  jsContent = `function drawPicture(drawingArray,canvasId){let canvas=document.querySelector(canvasId);let context=canvas.getContext('2d');context.lineWidth='40';context.lineJoin='round';context.lineCap='round';for(let lineKey in drawingArray){let line=drawingArray[lineKey];context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()}};let tempCanvas;`;
+  jsContent = `function drawPicture(drawingArray,canvasId){let canvas=document.querySelector(canvasId);let context=canvas.getContext('2d');var thickness=40;context.lineWidth=thickness;context.lineJoin='round';context.lineCap='round';for(let lineKey in drawingArray){let line=drawingArray[lineKey];context.beginPath();context.arc(line[0].x, line[0].y, thickness/2,0,2 * Math.PI);context.fill();context.beginPath();context.moveTo(line[0].x,line[0].y);for(let segmentKey in line.slice(1)){let segment=line[segmentKey];context.lineTo(segment.x,segment.y)};context.stroke()}};let tempCanvas;`;
 
   for (let roundNumber in chainReactionData) {
     let roundData = chainReactionData[roundNumber];
